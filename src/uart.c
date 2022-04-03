@@ -1,9 +1,10 @@
 /**
  * Developed by Vikram Bala, C'24 University of Pennsylvania
  */
+
 #include "uart.h"
 
-#define CPU_FREQ 16000000UL
+#define CPU_FREQ 8000000UL
 #define BAUD 9600
 #define BAUD_REGISTER (((CPU_FREQ / (BAUD * 16UL))) - 1)
 
