@@ -1,5 +1,7 @@
 /**
- * Developed by Vikram Bala, C'24 University of Pennsylvania
+ * ATMega328P UART Transmission (Tx) Library
+ * @author Developed by Vikram Bala, C'24 University of Pennsylvania
+ * @date March, 2022
  */
 
 #include "uart.h"

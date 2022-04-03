@@ -1,20 +1,44 @@
+/**
+ * Servo Motor library for the SG90 servo motor.
+ * @author Developed by Vikram Bala, C'24 University of Pennsylvania
+ * @date April 3rd, 2022
+ */
+
 #include "Custom_Servo.h"
 #include "uart.h"
 #include <stdio.h>
 
 #define DEBUG 1
 
+//Used for UART printing
 char str[20];
+
+/**
+ * OCR_MAX sets the OCR to be whatever will cause 20ms period
+ * in fast PWM mode.
+ */
 int ocr_max = (int) (0.020 / (1.0/(CPU_FREQ/PRESCALE)));
 
+/**
+ * Method used to directly control PWM duty cycle to yaw servo motor
+ * @param duty_cycle
+ */
 void debug_servo_yaw(float duty_cycle) {
     OCR0B = ocr_max * duty_cycle;
 }
 
+/**
+ * Method used to directly control PWM duty cycle to pitch servo motor
+ * @param duty_cycle
+ */
 void debug_servo_pitch(float duty_cycle) {
     OCR1B = ocr_max * duty_cycle;
 }
 
+/**
+ * Turns the servo yaw motor to a specific degree value between 0-180º.
+ * @param deg
+ */
 void turn_servo_yaw(int deg) {
     if (deg > 180) {
         return;
@@ -30,6 +54,10 @@ void turn_servo_yaw(int deg) {
 }
 
 
+/**
+ * Turns the servo yaw motor to a specific degree value between 0-180º.
+ * @param deg
+ */
 void turn_servo_pitch(int deg) {
     if (deg > 180) {
         return;
@@ -44,6 +72,11 @@ void turn_servo_pitch(int deg) {
     OCR1B = ocr_max * duty_cycle;
 }
 
+/**
+ * Returns a Servo struct for the yaw motor
+ * Controlled by timer 0.
+ * @return Servo
+ */
 Servo create_servo_yaw() {
     Servo servo;
     servo.turn_to = &turn_servo_yaw;
@@ -79,6 +112,11 @@ Servo create_servo_yaw() {
 }
 
 
+/**
+ * Returns a Servo struct for the pitch motor
+ * Controlled by timer 1.
+ * @return Servo
+ */
 Servo create_servo_pitch() {
     Servo servo;
     servo.turn_to = &turn_servo_pitch;
