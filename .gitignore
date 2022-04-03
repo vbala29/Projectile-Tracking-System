@@ -53,3 +53,4 @@ dkms.conf
 cmake-build-debug/
 cmake-build-uno/
 .idea/
+.pio/
