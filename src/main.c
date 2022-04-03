@@ -11,14 +11,14 @@ int main() {
 
     _delay_ms(1000);
 
-    Servo servo = create_servo();
+    Servo servo = create_servo_pitch();
     while(1) {
         //servo.turn_to(0);
-        servo.debug(0.02);
+        servo.debug(0.03);
 
         _delay_ms(500);
 
-       // servo.turn_to(180);
+       //servo.turn_to(180);
        servo.debug(0.12);
 
         _delay_ms(500);
