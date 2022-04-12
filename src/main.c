@@ -10,41 +10,53 @@
 #include <util/delay.h>
 #include "uart.h"
 #include "Custom_Servo.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 
+Servo pitch;
+Servo yaw;
 
+char str[40];
 
-int main() {
+void initialize() {
+    UART_setup();
+    //UART_RxInterruptEnable(1);
+
     CLKPR = (1 << CLKPCE);
     CLKPR = (1<<CLKPS0); //Divide clock by 1/2
 
-//    UART_setup();
-    Servo servo = create_servo_pitch();
-    Servo servo_2 = create_servo_yaw();
+    pitch = create_servo_pitch();
+    yaw = create_servo_yaw();
+}
 
+int main() {
+    initialize();
 
     while(1) {
+        char buf_pitch[5] = {'\0', '\0', '\0', '\0', '\0'};
+        UART_read(buf_pitch, 4);
+        char *end_pitch;
+        unsigned int pitch_deg = strtol(buf_pitch, &end_pitch, 10);
 
-        _delay_ms(500);
-        servo.turn_to(0);
-        servo_2.turn_to(0);
+        char buf_yaw[5] = {'\0', '\0', '\0', '\0', '\0'};
+        UART_read(buf_yaw, 4);
+        char *end_yaw;
+        unsigned int yaw_deg = strtol(buf_yaw, &end_yaw, 10);
 
-        _delay_ms(500);
-        servo.turn_to(30);
-        servo_2.turn_to(30);
 
-        _delay_ms(500);
-        servo.turn_to(60);
-        servo_2.turn_to(60);
+        sprintf(str, "Pitch Angle: %u, Yaw Angle: %u\n", pitch_deg, yaw_deg);
+        UART_stringWrite(str);
 
-        _delay_ms(500);
-        servo.turn_to(90);
-        servo_2.turn_to(90);
+        pitch.turn_to(pitch_deg);
+        yaw.turn_to(yaw_deg);
     }
 
     return 0;
 }
+
+
 
 #pragma clang diagnostic pop

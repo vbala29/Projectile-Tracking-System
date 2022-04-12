@@ -8,7 +8,7 @@
 #include "uart.h"
 #include <stdio.h>
 
-#define DEBUG 1
+#define DEBUG 0
 
 //Used for UART printing
 char str[20];
