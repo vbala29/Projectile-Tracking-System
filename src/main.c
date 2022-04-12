@@ -14,34 +14,34 @@
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
 
+
+
 int main() {
     CLKPR = (1 << CLKPCE);
     CLKPR = (1<<CLKPS0); //Divide clock by 1/2
 
-    UART_setup();
+//    UART_setup();
     Servo servo = create_servo_pitch();
+    Servo servo_2 = create_servo_yaw();
+
 
     while(1) {
+
         _delay_ms(500);
         servo.turn_to(0);
+        servo_2.turn_to(0);
 
         _delay_ms(500);
         servo.turn_to(30);
+        servo_2.turn_to(30);
 
         _delay_ms(500);
         servo.turn_to(60);
+        servo_2.turn_to(60);
 
         _delay_ms(500);
         servo.turn_to(90);
-
-        _delay_ms(500);
-        servo.turn_to(120);
-
-        _delay_ms(500);
-        servo.turn_to(150);
-
-        _delay_ms(500);
-        servo.turn_to(180);
+        servo_2.turn_to(90);
     }
 
     return 0;

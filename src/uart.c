@@ -31,6 +31,31 @@ void UART_write(unsigned char data) {
 
 }
 
+void UART_read(char* buffer, uint8_t size) {
+    unsigned int index = 0;
+    while (index < size) {
+        while (!(UCSR0A & (1 << RXC0))); //RXC0 indicates when data is available in the receive buffer.
+        buffer[index++] = UDR0; //Set value at index in buffer to currently received byte and increment index.
+    }
+}
+
+void UART_RxInterruptEnable(int enable) {
+    if (enable) {
+        UCSR0B |= (1 << RXCIE0);
+    } else {
+        UCSR0B &= ~(1 << RXCIE0);
+    }
+}
+
+
+void UART_TxInterruptEnable(int enable) {
+    if (enable) {
+        UCSR0B |= (1 << TXCIE0);
+    } else {
+        UCSR0B &= ~(1 << TXCIE0);
+    }
+}
+
 void UART_stringWrite(char *str) {
     for (int i = 0; i < strlen(str); i++) {
         UART_write(str[i]);
