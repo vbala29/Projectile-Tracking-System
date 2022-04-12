@@ -41,12 +41,19 @@ void initialize() {
     sei();
 }
 
+void destruct() {
+    free(pitch);
+    free(yaw);
+}
+
 int main() {
     initialize();
 
     while(1) {
 
     }
+
+    destruct();
 
     return 0;
 }
