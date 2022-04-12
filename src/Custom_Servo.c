@@ -1,5 +1,5 @@
 /**
- * Servo Motor library for the SG90 servo motor.
+ * @brief Servo Motor library for the SG90 servo motor.
  * @author Developed by Vikram Bala, C'24 University of Pennsylvania
  * @date April 3rd, 2022
  */
@@ -7,11 +7,9 @@
 #include "Custom_Servo.h"
 #include "uart.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 #define DEBUG 0
-
-//Used for UART printing
-char str[20];
 
 /**
  * OCR_MAX sets the OCR to be whatever will cause 20ms period
@@ -77,10 +75,11 @@ void turn_servo_pitch(int deg) {
  * Controlled by timer 0.
  * @return Servo
  */
-Servo create_servo_yaw() {
-    Servo servo;
-    servo.turn_to = &turn_servo_yaw;
-    servo.debug = &debug_servo_yaw;
+Servo* create_servo_yaw() {
+    Servo* servo;
+    servo = malloc(sizeof(Servo));
+    servo->turn_to = &turn_servo_yaw;
+    servo->debug = &debug_servo_yaw;
 
     DDRD |= (1 << DEFAULT_YAW_PIN); //Initialize pin D5/OC0B to be output
 
@@ -117,10 +116,11 @@ Servo create_servo_yaw() {
  * Controlled by timer 1.
  * @return Servo
  */
-Servo create_servo_pitch() {
-    Servo servo;
-    servo.turn_to = &turn_servo_pitch;
-    servo.debug = &debug_servo_pitch;
+Servo* create_servo_pitch() {
+    Servo* servo;
+    servo = malloc(sizeof(Servo));
+    servo->turn_to = &turn_servo_pitch;
+    servo->debug = &debug_servo_pitch;
 
     DDRB |= (1 << DEFAULT_PITCH_PIN); //Initialize pin 10/OC1B to be output
 

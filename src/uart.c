@@ -1,5 +1,6 @@
 /**
- * ATMega328P UART Transmission (Tx) Library
+ * ATMega328P USART Transmission/Receiving (Tx/RX) Library
+ * @brief for USART0 on ATMega328P
  * @author Developed by Vikram Bala, C'24 University of Pennsylvania
  * @date March, 2022
  */
@@ -32,21 +33,27 @@ void UART_write(unsigned char data) {
 
 }
 
-//Keep the print statements commented unless necessary for testing, as they cause consecutively sent bytes to be dropped
-//due to latency. If you want to use them to debug, only send one byte at a time.
+/**
+ * Keep the print statements commented unless necessary for testing, as they cause
+ * consecutively sent bytes to be dropped due to latency. If you want to use them to debug,
+ * only send one byte at a time.
+ */
 void UART_read(char* buffer, uint8_t size) {
     unsigned int index = 0;
 
     while (index < size) {
         while (!(UCSR0A & (1 << RXC0))); //RXC0 indicates when data is available in the receive buffer.
+
         buffer[index] = UDR0; //Set value at index in buffer to currently received byte. Reading UDR0 cleared RXC0.
-        char str[20];
-//        sprintf(str, "Read: %c \n", buffer[index]);
-//        UART_stringWrite(str);
+        if (DEBUG) sprintf(str, "Read: %c \n", buffer[index]);
+        if (DEBUG) UART_stringWrite(str);
+
         if (buffer[index] == '\n' || buffer[index] == '\r') {
+
             buffer[index] = '\0';
-//            sprintf(str, "Read: %u \n", buffer[index]);
-//            UART_stringWrite(str);
+            if (DEBUG) sprintf(str, "Read: %u \n", buffer[index]);
+            if (DEBUG) UART_stringWrite(str);
+
             return;
         } else {
             index++;

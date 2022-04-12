@@ -1,5 +1,5 @@
 /**
- * Servo Motor library for the SG90 servo motor.
+ * @brief Servo Motor library for the SG90 servo motor.
  * @author Developed by Vikram Bala, C'24 University of Pennsylvania
  * @date April 3rd, 2022
  */
@@ -37,8 +37,8 @@ void debug_servo_yaw(float duty_cycle);
 void debug_servo_pitch(float duty_cycle);
 
 void turn_servo();
-Servo create_servo_yaw();
-Servo create_servo_pitch();
+Servo* create_servo_yaw();
+Servo* create_servo_pitch();
 
 
 

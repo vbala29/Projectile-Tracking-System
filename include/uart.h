@@ -11,6 +11,11 @@
 #include <avr/io.h>
 #include <string.h>
 
+#define DEBUG 0 //Boolean turns on/off debugging mode print statements
+
+//Used for UART printing
+char str[100];
+
 /**
  * @brief Used to initialize UART on the Arduino.
  * Params for frame: 8 data bits, 1 stop bits, 0 parity bits. (8-N-1)
