@@ -9,6 +9,8 @@
 #include <ESP8266WebServer.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <SoftwareSerial.h>
+#include <ArduinoJson.h>
 
 const char* ssid = "AirPennNet-Device"; 
 const char* password = "penn1740wifi";  
@@ -21,10 +23,13 @@ IPAddress subnet(255,255,255,0);
 ESP8266WebServer server(80);
 
 unsigned int laser = 0; //Boolean indicating if laser is on
+unsigned short int pitch_num;
+unsigned short int yaw_num;
 
+SoftwareSerial s(3, 1); //Starts s using Rx/Tx labeled pins on the esp8266.
 
 void setup() {
-  Serial.begin(9600);
+  s.begin(9600);
   delay(100);
 
   pinMode(D2, OUTPUT);
@@ -34,33 +39,39 @@ void setup() {
    //check wi-fi is connected to wi-fi network
   while (WiFi.status() != WL_CONNECTED) {
   delay(1000);
-  Serial.print(".");
+  s.print(".");
   }
-  Serial.println("");
-  Serial.println("WiFi connected..!");
-  Serial.print("Got IP: ");  Serial.println(WiFi.localIP());
+  s.println("");
+  s.println("WiFi connected..!");
+  s.print("Got IP: ");  s.println(WiFi.localIP());
   
   server.on("/", handle_OnConnect);
   server.on("/laserOn", handle_laserOn);
   server.on("/laserOff", handle_laserOff);
+  server.on("/turret", handle_turret);
   server.onNotFound(handle_NotFound);
-  
+  server.enableCORS(true);
   server.begin();
-  Serial.println("HTTP server started");
+  s.println("HTTP server started");
 }
 
  void loop() {
-  if (Serial.available()) {
-    String loc = Serial.readStringUntil('.');
+  if (s.available()) {
+    String loc = s.readStringUntil('.');
     unsigned int comma_index = loc.indexOf(',');
+    s.println(loc);
     String pitch = loc.substring(0, comma_index);
     String yaw = loc.substring(comma_index + 1);
-    unsigned short int pitch_num = pitch.toInt();
-    unsigned short int yaw_num = yaw.toInt();
+    
+    unsigned short int pitch_num_temp = pitch.toInt();
+    unsigned short int yaw_num_temp = yaw.toInt();
+
+    pitch_num = pitch_num_temp;
+    yaw_num = yaw_num_temp;
 
     char str[25];
-    sprintf(str, "Received pitch: %u + , yaw:  + %u", pitch_num, yaw_num);
-    Serial.println(str);
+    sprintf(str, "Received pitch: %u, yaw: %u", pitch_num, yaw_num);
+    s.println(str);
   }
 
 server.handleClient(); 
@@ -72,6 +83,7 @@ server.handleClient();
 }
 
 void handle_OnConnect() {
+  server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(200, "text/html", HTML_STATUS(0));
 }
 
@@ -79,6 +91,7 @@ void handle_laserOn() {
   laser = 1;
   //Redirect to "/" route -> (onConnect)
   server.sendHeader("Location", String("/"), true);
+  server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send ( 302, "text/plain", "");
 }
 
@@ -86,11 +99,48 @@ void handle_laserOff() {
   laser = 0;
   //Redirect to "/" route -> (onConnect)
   server.sendHeader("Location", String("/"), true);
-  server.send ( 302, "text/plain", "");
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send( 302, "text/plain", "");
+}
+
+void handle_turret() {
+  DynamicJsonDocument doc(512);
+  doc["pitch"] = pitch_num;
+  doc["yaw"] = yaw_num;
+
+  String buf;
+  serializeJson(doc, buf);
+  s.print("Sending data: ");
+  s.println(buf);
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.send(200, "application/json", buf);
 }
 
 void handle_NotFound() {
-  server.send(404, "text/plain", "Error 404 not found");
+   if (server.method() == HTTP_OPTIONS)
+    {
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.sendHeader("Access-Control-Max-Age", "10000");
+        server.sendHeader("Access-Control-Allow-Methods", "PUT,POST,GET,OPTIONS");
+        server.sendHeader("Access-Control-Allow-Headers", "*");
+        s.print("204 sent\n");
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.send(204);
+    }
+    else
+    {
+        DynamicJsonDocument doc(512);
+        doc["pitch"] = pitch_num;
+        doc["yaw"] = yaw_num;
+      
+        String buf;
+        serializeJson(doc, buf);
+        s.print("Sending data: ");
+        s.println(buf);
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.send(200, "application/json", buf);
+        s.print("200 response inside of 404\n");
+    }
 }
 
 String HTML_STATUS(unsigned int led_status) {
@@ -98,10 +148,23 @@ String HTML_STATUS(unsigned int led_status) {
   String ptr = "<!DOCTYPE html>\n";
   ptr += "<html lang=\"en\">\n";
   ptr += "<head>\n";
+  ptr += "<script>\n";  
+  ptr +="function loadDoc() {\n";
+  ptr += "var xhttp = new XMLHttpRequest();\n";
+  ptr += "xhttp.onreadystatechange = function() {\n";
+  ptr += "console.log(this.responseText); let pitch = JSON.parse(this.responseText).pitch; let yaw = JSON.parse(this.responseText).yaw; \n";
+  ptr += "console.log(\"pitch = \" + pitch + \" yaw = \" + yaw);\n";
+  ptr +=  "document.getElementById(\"pitch\").innerHTML = \"Pitch Angle of Turret: \" + pitch + \"º above horizon\";\n";
+  ptr +=  "document.getElementById(\"yaw\").innerHTML = \"Yaw Angle of Turret: \" + yaw + \"º above horizon\";\n";
+  ptr += "}\n";
+  ptr += "xhttp.open(\"GET\", \"10.103.219.210/turret\");\n";
+  ptr += "xhttp.send();}\n";
+  ptr += "var intervalId = setInterval(loadDoc, 1000);\n"; //repeat every one second
+  ptr += "</script>\n";
   ptr += "<style>\n";
   ptr += "html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}\n";
   ptr += "p {font-size: 14px;color: #888;margin-bottom: 10px;}\n";
-  ptr += "body{margin-top: 10px;} h1 {color: #444444;margin: 50px auto 30px;} h3 {color: #444444;margin-bottom: 50px;}\n";
+  ptr += "body{margin-top: 10px;} h1 {color: #444444;margin: 20px auto 30px;} h3 {color: #444444;margin-bottom: 50px;}\n";
   ptr += ".button {display: block;width: 80px;background-color: #1abc9c;border: none;color: white;padding: 13px 30px;text-decoration: none;font-size: 25px;margin: 0px auto 35px;cursor: pointer;border-radius: 4px;}\n";
   ptr += ".button-on {background-color: #1abc9c;}\n";
   ptr += ".button-on:active {background-color: #16a085;}\n";
@@ -147,6 +210,9 @@ String HTML_STATUS(unsigned int led_status) {
   } else {
     ptr += "<p>Laser Status: OFF</p><a class=\"button button-on\" href=\"/laserOn\">ON</a>\n";
   }
+
+  ptr += String("<h1 id=\"pitch\">Pitch Angle of Turret: " + String(pitch_num) + "º above horizon</h1>\n");
+  ptr += String("<h1 id=\"yaw\">Yaw Angle of Turret: " + String(yaw_num) + "º</h1>\n");
 
   ptr += "</body>\n";
   ptr += "</html>\n";

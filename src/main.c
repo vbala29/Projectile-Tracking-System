@@ -27,6 +27,8 @@ char buf_yaw[5] = {'\0', '\0', '\0', '\0', '\0'};
 unsigned int pitch_deg = 0;
 unsigned int yaw_deg = 0;
 
+uint32_t rate_limiter = 0;
+
 void initialize() {
     cli();
     UART_setup();
@@ -57,6 +59,15 @@ int main() {
             PORTD |= (1 << PORTD2);
         } else {
             PORTD &= ~(1 << PORTD2);
+        }
+
+        if (rate_limiter == 500000) {
+            //Send location data to ESP8266 to be used by the web server.
+            sprintf(str, "%u,%u.", pitch_deg, yaw_deg);
+            UART_stringWrite(str);
+            rate_limiter = 0;
+        } else {
+            rate_limiter++;
         }
     }
 
