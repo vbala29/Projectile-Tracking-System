@@ -35,6 +35,9 @@ void initialize() {
     CLKPR = (1 << CLKPCE);
     CLKPR = (1<<CLKPS0); //Divide clock by 1/2
 
+    DDRD &= ~(1 << DDD7); //Initialize pin D7 to be an input
+    DDRD |= (1 << DDD2); //Initialize pin D2 to be an output
+
     pitch = create_servo_pitch();
     yaw = create_servo_yaw();
 
@@ -50,7 +53,11 @@ int main() {
     initialize();
 
     while(1) {
-
+        if (PIND & (1 << PIND7)) {
+            PORTD |= (1 << PORTD2);
+        } else {
+            PORTD &= ~(1 << PORTD2);
+        }
     }
 
     destruct();

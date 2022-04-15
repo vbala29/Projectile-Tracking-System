@@ -7,6 +7,8 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 const char* ssid = "AirPennNet-Device"; 
 const char* password = "penn1740wifi";  
@@ -18,10 +20,14 @@ IPAddress subnet(255,255,255,0);
 //Start the server on port 80
 ESP8266WebServer server(80);
 
+unsigned int laser = 0; //Boolean indicating if laser is on
+
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(100);
+
+  pinMode(D2, OUTPUT);
 
   WiFi.begin(ssid, password);
 
@@ -43,8 +49,26 @@ void setup() {
   Serial.println("HTTP server started");
 }
 
-void loop() {
-  server.handleClient(); 
+ void loop() {
+  if (Serial.available()) {
+    String loc = Serial.readStringUntil('.');
+    unsigned int comma_index = loc.indexOf(',');
+    String pitch = loc.substring(0, comma_index);
+    String yaw = loc.substring(comma_index + 1);
+    unsigned short int pitch_num = pitch.toInt();
+    unsigned short int yaw_num = yaw.toInt();
+
+    char str[25];
+    sprintf(str, "Received pitch: %u + , yaw:  + %u", pitch_num, yaw_num);
+    Serial.println(str);
+  }
+
+server.handleClient(); 
+  if (laser) {
+   digitalWrite(D2, HIGH);
+  } else {
+    digitalWrite(D2, LOW);
+  }
 }
 
 void handle_OnConnect() {
@@ -52,11 +76,17 @@ void handle_OnConnect() {
 }
 
 void handle_laserOn() {
-  server.send(200, "text/html", "Laser On");
+  laser = 1;
+  //Redirect to "/" route -> (onConnect)
+  server.sendHeader("Location", String("/"), true);
+  server.send ( 302, "text/plain", "");
 }
 
 void handle_laserOff() {
-  server.send(200, "text/plain", "Laser off");
+  laser = 0;
+  //Redirect to "/" route -> (onConnect)
+  server.sendHeader("Location", String("/"), true);
+  server.send ( 302, "text/plain", "");
 }
 
 void handle_NotFound() {
@@ -112,7 +142,12 @@ String HTML_STATUS(unsigned int led_status) {
   ptr += "</head>\n";
   ptr += "<body>\n";
   ptr += "<h1>Status Panel</h1>\n";
-  ptr += "<p>LED1 Status: ON</p><a class=\"button button-off\" href=\"/led1off\">OFF</a>\n";
+  if (laser) {
+      ptr += "<p>Laser Status: ON</p><a class=\"button button-off\" href=\"/laserOff\">OFF</a>\n";
+  } else {
+    ptr += "<p>Laser Status: OFF</p><a class=\"button button-on\" href=\"/laserOn\">ON</a>\n";
+  }
+
   ptr += "</body>\n";
   ptr += "</html>\n";
 
