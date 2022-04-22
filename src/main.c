@@ -21,9 +21,7 @@ Servo* pitch;
 Servo* yaw;
 
 int serial_state = 0; //0 = no new data, 1 = pitch received, 2 = yaw/pitch received.
-char buf_pitch[5] = {'\0', '\0', '\0', '\0', '\0'};
-char buf_yaw[5] = {'\0', '\0', '\0', '\0', '\0'};
-char buf_waste[5] = {'\0', '\0', '\0', '\0', '\0'};
+char buf [5] = {'\0', '\0', '\0', '\0', '\0'};
 
 unsigned int pitch_deg = 0;
 unsigned int yaw_deg = 0;
@@ -83,20 +81,13 @@ int main() {
  */
 ISR(USART_RX_vect) {
     char *end;
-    if (serial_state == 0) {
-        UART_read(buf_pitch, 4);
-        pitch_deg = strtol(buf_pitch, &end, 10);
+    UART_read(buf, 4);
+    if (buf[0] == 'P') {
+        pitch_deg = strtol(buf + 1, &end, 10);
         serial_state = 1;
-    } else if (serial_state == 1){
-        UART_read(buf_yaw, 4);
-        yaw_deg = strtol(buf_yaw, &end, 10);
+    } else if (buf[0] == 'Y') {
+        yaw_deg = strtol(buf + 1, &end, 10);
         serial_state = 2;
-    } else if (serial_state == 2) {
-        UART_read(buf_waste, 4);
-        serial_state = 3;
-    } else if (serial_state == 3) {
-        UART_read(buf_waste, 4);
-        serial_state = 0;
     }
 
     if (serial_state == 2) {
@@ -108,9 +99,10 @@ ISR(USART_RX_vect) {
 
         //Clear buffers
         for (int i = 0; i < 5; i++) {
-            buf_pitch[i] = '\0';
-            buf_yaw[i] = '\0';
+            buf[i] = '\0';
         }
+
+        serial_state = 0;
     }
 
 
@@ -119,3 +111,4 @@ ISR(USART_RX_vect) {
 
 
 #pragma clang diagnostic pop
+
