@@ -62,7 +62,7 @@ void setup() {
     s.println(loc);
     String pitch = loc.substring(0, comma_index);
     String yaw = loc.substring(comma_index + 1);
-    
+    s.read();
     unsigned short int pitch_num_temp = pitch.toInt();
     unsigned short int yaw_num_temp = yaw.toInt();
 

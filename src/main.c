@@ -23,6 +23,7 @@ Servo* yaw;
 int serial_state = 0; //0 = no new data, 1 = pitch received, 2 = yaw/pitch received.
 char buf_pitch[5] = {'\0', '\0', '\0', '\0', '\0'};
 char buf_yaw[5] = {'\0', '\0', '\0', '\0', '\0'};
+char buf_waste[5] = {'\0', '\0', '\0', '\0', '\0'};
 
 unsigned int pitch_deg = 0;
 unsigned int yaw_deg = 0;
@@ -63,7 +64,7 @@ int main() {
 
         if (rate_limiter == 500000) {
             //Send location data to ESP8266 to be used by the web server.
-            sprintf(str, "%u,%u.", pitch_deg, yaw_deg);
+            sprintf(str, "%u,%u.\n", pitch_deg, yaw_deg);
             UART_stringWrite(str);
             rate_limiter = 0;
         } else {
@@ -86,10 +87,16 @@ ISR(USART_RX_vect) {
         UART_read(buf_pitch, 4);
         pitch_deg = strtol(buf_pitch, &end, 10);
         serial_state = 1;
-    } else {
+    } else if (serial_state == 1){
         UART_read(buf_yaw, 4);
         yaw_deg = strtol(buf_yaw, &end, 10);
         serial_state = 2;
+    } else if (serial_state == 2) {
+        UART_read(buf_waste, 4);
+        serial_state = 3;
+    } else if (serial_state == 3) {
+        UART_read(buf_waste, 4);
+        serial_state = 0;
     }
 
     if (serial_state == 2) {
@@ -104,8 +111,6 @@ ISR(USART_RX_vect) {
             buf_pitch[i] = '\0';
             buf_yaw[i] = '\0';
         }
-
-        serial_state = 0;
     }
 
 
