@@ -19,9 +19,9 @@ https://youtu.be/M7niDRb0H9w
 # Components
 **Servo Turret System (Relevant Files: src/Custom_Servo.c, include/Custom_Servo.h, src/main.c)**
 
-We wrote a servo motor control library for the SG90 servo motor (datasheet [here]("http://www.ee.ic.ac.uk/pcheung/teaching/DE1_EE/stores/sg90_datasheet.pdf")). Note that this library was limited to the use of one 8-bit and one 16-bit timer on the Atmega328P microcontroller (see header file for the specific output PWM pins for the servos). This meant that both servos were not able to operate with the same level of precision in movements. Using this library, in main.c the system clock was prescaled by 1/2 to bring the frequency to 8MHz; however the library can operate at any CPU frequency so long CPU_FREQ and PRESCALE macros in it's header are changed. 
+We wrote a servo motor control library for the SG90 servo motor; the datasheet can be accesed [here]("http://www.ee.ic.ac.uk/pcheung/teaching/DE1_EE/stores/sg90_datasheet.pdf"). Note that this library was limited to the use of one 8-bit and one 16-bit timer on the Atmega328P microcontroller (see header file for the specific output PWM pins for the servos). This meant that both servos were not able to operate with the same level of precision in movements. Using this library, in main.c the system clock was prescaled by 1/2 to bring the frequency to 8MHz; however the library can operate at any CPU frequency so long CPU_FREQ and PRESCALE macros in it's header are changed. 
   
   
 **262k-color TFT-LCD Radar Display**
 
-We wrote a LCD graphics library for the ST7735R (datasheet [here]("https://www.crystalfontz.com/controllers/Sitronix/ST7735R/"))
+We wrote a LCD graphics library for the ST7735R. The datasheet can be accessed [here]("https://www.crystalfontz.com/controllers/Sitronix/ST7735R/").
