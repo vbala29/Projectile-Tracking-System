@@ -1,5 +1,5 @@
 # SPLAT-CIWS
-Simple Projectile Locating and Aiming Tower (SPLAT) - a Close in Weapons System (CIWS) by Vikram Bala and Andy Liu. ESE350 Spring 2022 Final Project.
+Simple Projectile Locating and Aiming Tower (SPLAT) - a Close in Weapons System (CIWS) for Short Range Missile Defense by Vikram Bala and Andy Liu. ESE350 Spring 2022 Final Project.
 
 
 # Media
