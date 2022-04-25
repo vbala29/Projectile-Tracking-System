@@ -62,7 +62,7 @@ void setup() {
     s.println(loc);
     String pitch = loc.substring(0, comma_index);
     String yaw = loc.substring(comma_index + 1);
-    s.read();
+    s.read(); //new line char 
     unsigned short int pitch_num_temp = pitch.toInt();
     unsigned short int yaw_num_temp = yaw.toInt();
 
@@ -155,7 +155,7 @@ String HTML_STATUS(unsigned int led_status) {
   ptr += "console.log(this.responseText); let pitch = JSON.parse(this.responseText).pitch; let yaw = JSON.parse(this.responseText).yaw; \n";
   ptr += "console.log(\"pitch = \" + pitch + \" yaw = \" + yaw);\n";
   ptr +=  "document.getElementById(\"pitch\").innerHTML = \"Pitch Angle of Turret: \" + pitch + \"º above horizon\";\n";
-  ptr +=  "document.getElementById(\"yaw\").innerHTML = \"Yaw Angle of Turret: \" + yaw + \"º above horizon\";\n";
+  ptr +=  "document.getElementById(\"yaw\").innerHTML = \"Yaw Angle of Turret: \" +  yaw + \"º \";\n";
   ptr += "}\n";
   ptr += "xhttp.open(\"GET\", \"10.103.219.210/turret\");\n";
   ptr += "xhttp.send();}\n";
