@@ -7,6 +7,10 @@ Overview: Our project is intended to be a mock example of the close in missile d
 
 src/main.c serves as the entry point for the code running on the Atmega328p that controls the Servo motors and is connected via UART to the computer vision computer. src/LCD_main.c serves as the entry point for the code running on the Atmega328p that controls the TFT-LCD radar display and is also connected via UART to the comptuer vision computer. The ESP8266.ino file can be directly uploaded to the esp8266 and has no other dependencies in this repository, though libraries for the ESP8266 Web Server must be apropriately downlaoded.
 
+StereoVision/3d_ball.py serves as the central code for the computer vision logic. Because of the pregenereated stereoMap.xml calibration parameters, directly running the code will start up both cameras as well as transmit location and angle data to both arduinos used in the system. Modification of the "COM" ports used to transmit serial information may be required, as well as adjusting of the "left" and "right" camera indices used.
+
+To re-calibrate the cameras, run StereoVision/gen_calibration_images.py and hold up a 10 square by 8 square black-and-white chessboard image. Be sure that it is in the frame of both cameras, and press "s" when it is. Repeat multiple times while rotating the image so that it is in different planes. Afterwards, run StereoVision/create_cal_params.py to generate stereoMap.xml, the calibration parameters required. Finally, run StereoVision/3d_ball.py as described above, which will automatically adjust for the newly generated parameters.
+
 # Media
 
 **S.P.L.A.T CIWS Full Demo Video**
