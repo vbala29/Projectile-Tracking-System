@@ -36,3 +36,5 @@ We wrote a LCD graphics library for the ST7735R. The datasheet can be accessed [
 
 
 **ESP8266 Web Server (Relevant Files: esp8266/esp8266/esp8266.ino)**
+
+We used an ESP8266 microcontroller to host a webserver that supplied information to the user about the current aiming position of the turret (see media above), as well as the ability to turn on and off the laser on the turret. The website was written using HTML/CSS/JS along with some basic api requests in the website back to the ESP8266, such that as new data was received over UART by the ESP8266, the website would asynchronously request and receive this new data to be displayed. The website code is inside of the .ino file in a C-string. There may have been better ways to host the code besides this, but given the simplicty of our website, and the time constraints of the project we didn't focus on this. This device is also wired to an input capture pin on the Atmega328p to send information about controlling the laser. In addition, we used a voltage divider to step down the logicl level from 5V to 3.3V when sending serial data from the Atmega328p to the ESP8266.
