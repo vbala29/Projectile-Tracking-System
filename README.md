@@ -43,7 +43,7 @@ We wrote a LCD graphics library for the ST7735R. The datasheet can be accessed [
 
 **Stereo Vision System (Relevant Directory: /StereoVision)**
 
-We used a two camera stereo vision system to compute depth, a necessary measurement for accurate aiming of the tower. We calibrated the two cameras using Zhang's method, allowing us to compute depth measurements when an object is detected on both cameras. This, in addition to measurements of horizontal and vertical distance, allowed us to calculate pitch and yaw angles of the "projectile" reference to the laser, after offsetting for the laser's initial position. Simple trigonemetric calculations given a (horizontal distance, vertical distance, depth) coordinate were used to compute this.
+We used a two camera stereo vision system to compute depth, a necessary measurement for accurate aiming of the tower. We calibrated the two cameras using Zhang's method[https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr98-71.pdf], allowing us to compute depth measurements when an object is detected on both cameras. This, in addition to measurements of horizontal and vertical distance, allowed us to calculate pitch and yaw angles of the "projectile" reference to the laser, after offsetting for the laser's initial position. Simple trigonemetric calculations given a (horizontal distance, vertical distance, depth) coordinate were used to compute this.
 
 
 **ESP8266 Web Server (Relevant Files: esp8266/esp8266/esp8266.ino)**
