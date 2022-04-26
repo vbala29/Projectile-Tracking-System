@@ -39,7 +39,7 @@ We wrote a LCD graphics library for the ST7735R. The datasheet can be accessed [
 
 **Stereo Vision System (Relevant Directory: /StereoVision)**
 
-When deciding what type fo computer vision system to use, we immidiately realized that distance measurement would be one of our most important metrics. Without depth perception, we would not be able to accurately calculate angles to aim the turret at a projectile. Thus, we chose a stereo vision system, which uses two cameras to allow for depth perception to be simulated. 
+We used a two camera stereo vision system to compute depth, a necessary measurement for accurate aiming of the tower. We calibrated the two cameras using Zhang's method, allowing us to compute depth measurements when an object is detected on both cameras. This, in addition to measurements of horizontal and vertical distance, allowed us to calculate pitch and yaw angles of the "projectile" reference to the laser, after offsetting for the laser's initial position. Simple trigonemetric calculations given a (horizontal distance, vertical distance, depth) coordinate were used to compute this.
 
 
 **ESP8266 Web Server (Relevant Files: esp8266/esp8266/esp8266.ino)**
