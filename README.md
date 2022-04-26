@@ -5,7 +5,7 @@ Overview: Our project is intended to be a mock example of the close in missile d
 
 # How to Run Code
 
-Main.c serves as the entry point for the code running on the Atmega328p that controls the Servo motors and is connected via UART to the computer vision computer. LCD_main.c serves as the entry point for the code running on the Atmega328p that controls the TFT-LCD radar display and is also connected via UART to the comptuer vision computer. The ESP8266.ino file can be directly uploaded to the esp8266 and has no other dependencies in this repository, though libraries for the ESP8266 Web Server must be apropriately downlaoded.
+src/main.c serves as the entry point for the code running on the Atmega328p that controls the Servo motors and is connected via UART to the computer vision computer. src/LCD_main.c serves as the entry point for the code running on the Atmega328p that controls the TFT-LCD radar display and is also connected via UART to the comptuer vision computer. The ESP8266.ino file can be directly uploaded to the esp8266 and has no other dependencies in this repository, though libraries for the ESP8266 Web Server must be apropriately downlaoded.
 
 # Media
 
