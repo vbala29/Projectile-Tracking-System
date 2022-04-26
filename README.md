@@ -1,6 +1,11 @@
 # SPLAT-CIWS
 Simple Projectile Locating and Aiming Tower (SPLAT) - a Close in Weapons System (CIWS) for Short Range Missile Defense by Vikram Bala and Andy Liu. ESE350 Spring 2022 Final Project.
 
+Overview: Our project is intended to be a mock example of the close in missile defense systems used in the real world, such as the PHALANX CIWS. We took a computer vision based approach to projectile tracking, and created utilities such as an LCD radar display and remote website command to monitor information collected about the projectile and control the turret's defense weapon (a laser in this case). Our goals included minimizing latency in tracking the object, writing comprehensive libraries and peripherials that could be used with various parameters and use cases, and ultimately creating a working demo within the time constraints of just a few weeks.
+
+# How to Run Code
+
+
 
 # Media
 
@@ -33,6 +38,8 @@ We wrote a LCD graphics library for the ST7735R. The datasheet can be accessed [
 
 
 **Stereo Vision System (Relevant Directory: /StereoVision)**
+
+When deciding what type fo computer vision system to use, we immidiately realized that distance measurement would be one of our most important metrics. Without depth perception, we would not be able to accurately calculate angles to aim the turret at a projectile. Thus, we chose a stereo vision system, which uses two cameras to allow for depth perception to be simulated. 
 
 
 **ESP8266 Web Server (Relevant Files: esp8266/esp8266/esp8266.ino)**
